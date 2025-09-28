@@ -1,4 +1,3 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 const useLoginStore = defineStore('loginstate', {
@@ -10,8 +9,8 @@ const useLoginStore = defineStore('loginstate', {
             }
         }
     },
-    acitons: {
-        setLogin() {
+    actions: {
+        setLogin(show) {
             this.showLogin = show
         },
         saveUserInfo(info) {

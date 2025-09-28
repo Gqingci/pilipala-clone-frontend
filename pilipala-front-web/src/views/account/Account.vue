@@ -1,12 +1,12 @@
 <template>
   <Dialog
-    :show="dialogConfig.show"
+    :show="loginStore.showLogin"
     :title="dialogConfig.title"
     :buttons="dialogConfig.buttons"
     :draggable="dialogConfig.draggable"
     width="820px"
     :showCancel="false"
-    @close="dialogConfig.show = false"
+    @close="closeDialog()"
   >
     <!-- 左方图片 -->
     <div class="dialog-panel">
@@ -160,7 +160,14 @@
 
 <script setup>
 import { ElForm } from "element-plus";
-import { ref, reactive, getCurrentInstance, nextTick, onMounted } from "vue";
+import {
+  ref,
+  reactive,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  onUpdated,
+} from "vue";
 const { proxy } = getCurrentInstance();
 import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
@@ -185,7 +192,6 @@ const changeCaptcha = async () => {
 };
 
 const dialogConfig = reactive({
-  show: true,
   buttons: [],
 });
 
@@ -193,7 +199,7 @@ const formData = ref({});
 const formDataRef = ref();
 
 const checkRepassword = (rule, value, callback) => {
-  if (value != formData.value.reRegisterPassword) {
+  if (value != formData.value.registerPassword) {
     callback(new Error(rule.message));
   } else {
     callback();
@@ -254,10 +260,9 @@ const doSubmit = () => {
     if (opType.value === 1) {
       params.password = params.password;
     }
-    console.log("提交数据:", params);
 
     let result = await proxy.Request({
-      url: opType === 0 ? proxy.Api.register : proxy.Api.login,
+      url: opType.value == 0 ? proxy.Api.register : proxy.Api.login,
       params,
       errorCallback: () => {
         changeCaptcha();
@@ -266,14 +271,32 @@ const doSubmit = () => {
     if (!result) {
       return;
     }
+
+    if (opType.value === 0) {
+      proxy.Message.success("注册成功");
+      showPanel(1);
+    } else if (opType.value === 1) {
+      proxy.Message.success("登录成功");
+      loginStore.setLogin(false);
+      loginStore.saveUserInfo(result.data);
+    }
   });
 };
 
-const showPanel = (type) => {
-  resetForm();
-  if (opType.value === type) return;
-  opType.value = type;
+const closeDialog = () => {
+  loginStore.setLogin(false);
 };
+
+const showPanel = (type) => {
+  opType.value = type;
+  if (loginStore.showLogin) {
+    resetForm();
+  }
+};
+
+onUpdated(() => {
+  showPanel(1);
+});
 
 onMounted(() => {
   showPanel(1);

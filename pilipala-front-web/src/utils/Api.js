@@ -6,7 +6,7 @@ const Api = {
     logout: "/account/logout",
     register: "/account/register",
     sendEmailCode: "/account/sendEmailCode",
-    autoLogin: "/account/autoLogin",
+    persistentLogin: "/account/persistentLogin",
     getUserCountInfo: "/account/getUserCountInfo",
     sourcePath: "/api/file/getResource?sourceName=",
     loadAllCategory: "/category/loadAllCategory",
