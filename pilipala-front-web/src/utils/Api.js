@@ -39,7 +39,7 @@ const Api = {
     //评论
     loadComment: "/comment/loadComment",
     postComment: "/comment/postComment",
-    userDelComment: "/comment/userDelComment",
+    userDelComment: "/comment/deleteComment",
     userTopComment: "/comment/topComment",
     userCancelTopComment: "/comment/cancelTopComment",
     //弹幕
@@ -62,7 +62,7 @@ const Api = {
     //个人主页
     uHomeUpdateUserInfo: "/uhome/updateUserInfo",
     uHomeLoadVideo: "/uhome/loadVideoList",
-    uHomeGetUsesrInfo: "/uhome/getUserInfo",
+    uHomeGetUserInfo: "/uhome/getUserInfo",
     //关注
     uHomeFocus: "/uhome/focus",
     //取消关注

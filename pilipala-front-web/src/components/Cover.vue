@@ -7,6 +7,7 @@
       width: width ? width + 'px' : '100%',
       height: width ? width * scale + 'px' : '100%',
     }"
+    @click="showViewerHandler"
   >
     <el-image
       :lazy="lazy"
@@ -29,7 +30,7 @@
     </el-image>
     <div v-else class="no-image">请选择图片</div>
     <el-image-viewer
-      :hidden-on-click-modal="treu"
+      :hide-on-click-modal="true"
       @close="
         () => {
           showViewer = false;
@@ -43,18 +44,8 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  getCurrentInstance,
-  nextTick,
-  computed,
-  onMounted,
-} from "vue";
+import { ref, getCurrentInstance, computed, onMounted } from "vue";
 const { proxy } = getCurrentInstance();
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
-const router = useRouter();
 
 const props = defineProps({
   source: {
@@ -94,7 +85,7 @@ const props = defineProps({
 
 const fileImage = ref();
 const fileSource = computed(() => {
-  if (props.source && !props.defaultImg) {
+  if (!props.source && !props.defaultImg) {
     fileImage.value = null;
     return null;
   }
@@ -120,7 +111,7 @@ const imageList = computed(() => {
     return [];
   }
   const sourceImg =
-    props.Api.sourcePath + props.source.replace(proxy.imageThumbnailSuffix, "");
+    proxy.Api.sourcePath + props.source.replace(proxy.imageThumbnailSuffix, "");
   return [sourceImg];
 });
 

@@ -169,9 +169,6 @@ import {
   onUpdated,
 } from "vue";
 const { proxy } = getCurrentInstance();
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
-const router = useRouter();
 
 import { useLoginStore } from "@/stores/loginStore.js";
 const loginStore = useLoginStore();

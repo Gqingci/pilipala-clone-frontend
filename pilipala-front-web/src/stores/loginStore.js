@@ -6,7 +6,8 @@ const useLoginStore = defineStore('loginstate', {
             showLogin: false,
             userInfo: {
 
-            }
+            },
+            devideId: null
         }
     },
     actions: {
@@ -15,6 +16,9 @@ const useLoginStore = defineStore('loginstate', {
         },
         saveUserInfo(info) {
             this.userInfo = info;
+        },
+        saveDeviceId(deviceId) {
+            this.devideId = deviceId;
         }
     }
 })

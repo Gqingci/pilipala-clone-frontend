@@ -1,7 +1,40 @@
 <template>
   <div :class="['header-bar', 'header-bar-' + theme]">
     <ul class="menu">
-      <li><router-link class="iconfont icon-logo" to="/">首页</router-link></li>
+      <li>
+        <el-popover
+          :width="categoryPartCount * (150 + 21) + 24"
+          trigger="hover"
+          :show-arrow="false"
+          :offset="22"
+          placement="bottom-start"
+          ><template #reference>
+            <router-link class="iconfont icon-logo" to="/">首页</router-link>
+          </template>
+          <div class="nav-list">
+            <div
+              class="nav-part"
+              v-for="index in categoryPartCount"
+              :key="index"
+            >
+              <router-link
+                class="nav-item"
+                :key="item"
+                v-for="item in categoryStore.categoryList.slice(
+                  (index - 1) * partCount,
+                  index * partCount
+                )"
+                :to="`/v/${item.categoryCode}`"
+              >
+                <span class="icon" v-if="item.icon">
+                  <img :src="`${proxy.Api.sourcePath}${item.icon}`" />
+                </span>
+                <span class="category-name">{{ item.categoryName }}</span>
+              </router-link>
+            </div>
+          </div></el-popover
+        >
+      </li>
       <li><a href="" class="iconfont">会员购</a></li>
     </ul>
 
@@ -73,23 +106,23 @@
           </div>
         </div> -->
       </div>
-      <div class="user-panel-item">
+      <div class="user-panel-item" @click="navJump('/message')">
         <div class="iconfont icon-message"></div>
         <div>消息</div>
       </div>
-      <div class="user-panel-item">
+      <div class="user-panel-item" @click="navJump('/collection')">
         <div class="iconfont icon-collection"></div>
         <div>收藏</div>
       </div>
-      <div class="user-panel-item">
+      <div class="user-panel-item" @click="navJump('/history')">
         <div class="iconfont icon-history"></div>
         <div>历史</div>
       </div>
-      <div class="user-panel-item">
+      <div class="user-panel-item" @click="navJump('/ucenter/home')">
         <div class="iconfont icon-light"></div>
         <div>创作中心</div>
       </div>
-      <div class="btn-upload">
+      <div class="btn-upload" @click="navJump('/upload')">
         <el-button type="primary" size="large">
           <span class="iconfont icon-upload"></span>
           <span>投稿</span>
@@ -100,15 +133,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from "vue";
+import { ref, getCurrentInstance, computed } from "vue";
 const { proxy } = getCurrentInstance();
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
-const router = useRouter();
 
 import { useLoginStore } from "@/stores/loginStore.js";
-import Avatar from "../components/Avatar.vue";
+import Avatar from "../../components/Avatar.vue";
 const loginStore = useLoginStore();
+import { useCategoryStore } from "@/stores/categoryStore";
+const categoryStore = useCategoryStore();
 
 const props = defineProps({
   theme: {
@@ -145,6 +177,19 @@ const logout = async () => {
       loginStore.saveUserInfo({});
     },
   });
+};
+
+const partCount = 10;
+const categoryPartCount = computed(() => {
+  return Math.ceil(categoryStore.categoryList.length / partCount);
+});
+
+const navJump = (url) => {
+  if (Object.keys(loginStore.userInfo).length == 0) {
+    loginStore.setLogin(true);
+    return;
+  }
+  window.open(url, "blank");
 };
 </script>
 
@@ -392,6 +437,43 @@ const logout = async () => {
   }
   a {
     color: #61666d;
+  }
+}
+
+.nav-list {
+  display: flex;
+  .nav-part {
+    &:last-child {
+      border-right: none;
+    }
+    padding: 0px 10px;
+    border-right: 1px solid #ddd;
+    .nav-item {
+      display: flex;
+      padding: 0px 10px;
+      height: 35px;
+      border-radius: 3px;
+      cursor: pointer;
+      align-items: center;
+      width: 150px;
+      text-decoration: none;
+      color: #2f3238;
+      &:hover {
+        background: #ddd;
+      }
+      .icon {
+        width: 25px;
+        height: 25px;
+        overflow: hidden;
+        margin-right: 5px;
+        img {
+          width: 100%;
+        }
+      }
+      .category-name {
+        flex: 1;
+      }
+    }
   }
 }
 </style>

@@ -40,12 +40,6 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from "vue";
-const { proxy } = getCurrentInstance();
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
-const router = useRouter();
-
 const props = defineProps({
   draggable: {
     type: Boolean,
@@ -83,7 +77,7 @@ const props = defineProps({
   },
 });
 
-const maxHeigh = window.innerHeight - props.top - 120;
+const maxHeight = window.innerHeight - props.top - 120;
 const emit = defineEmits();
 const close = () => {
   emit("close");
