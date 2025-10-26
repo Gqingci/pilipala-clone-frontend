@@ -70,10 +70,11 @@ const showReplyHandler = (commentId) => {
 provide("showReply", showReplyHandler);
 
 const videoInfo = inject("videoInfo");
+debugger;
 const showComment = computed(() => {
   return (
     videoInfo.value.interaction == null ||
-    videoInfo.value.interaction.indexOf("0")
+    videoInfo.value.interaction.indexOf("1") == -1
   );
 });
 

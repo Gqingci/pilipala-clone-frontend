@@ -99,11 +99,14 @@
           </div>
         </template>
         <Avatar v-else :width="35" :lazy="false" @click="login"></Avatar>
-        <!-- <div class="user-info-panel">
+        <!-- <div class="user-placeLogin-panel">
           <div class="placeLogin">
             <p class="placeLogin-text">免费看高清视频</p>
             <p class="placeLogin-text">发表弹幕/评论</p>
+            <p class="placeLogin-text">热门番剧影视看不停</p>
+            <p class="placeLogin-text">多端同步播放记录</p>
           </div>
+          <el-button class="btn" @click="login">立刻登录</el-button>
         </div> -->
       </div>
       <div class="user-panel-item" @click="navJump('/message')">

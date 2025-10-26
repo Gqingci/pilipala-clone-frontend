@@ -54,6 +54,7 @@
             placeholder="请输入邮箱"
             :maxlength="128"
             size="large"
+            @focus="onEmailFocus"
           >
             <template #prefix>
               <span class="iconfont icon-account"></span>
@@ -70,6 +71,7 @@
             show-password
             :maxlength="128"
             size="large"
+            @focus="onPasswordFocus"
           >
             <template #prefix>
               <span class="iconfont icon-password"></span>
@@ -88,6 +90,7 @@
               show-password
               :maxlength="128"
               size="large"
+              @focus="onPasswordFocus"
             >
               <template #prefix>
                 <span class="iconfont icon-password"></span>
@@ -104,6 +107,7 @@
               show-password
               :maxlength="128"
               size="large"
+              @focus="onPasswordFocus"
             >
               <template #prefix>
                 <span class="iconfont icon-password"></span>
@@ -155,10 +159,18 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="bottom-images" v-if="showBottomImages">
+      <img :src="leftImage" class="left-img" />
+      <img :src="rightImage" class="right-img" />
+    </div>
   </Dialog>
 </template>
 
 <script setup>
+import img22Close from "@/assets/images/22_close.png";
+import img33Close from "@/assets/images/33_close.png";
+import img22Open from "@/assets/images/22_open.png";
+import img33Open from "@/assets/images/33_open.png";
 import { ElForm } from "element-plus";
 import {
   ref,
@@ -205,18 +217,12 @@ const checkRepassword = (rule, value, callback) => {
 
 const rules = {
   email: [
-    { required: true, message: "请输入邮箱" },
     {
       validator: proxy.Verify.email,
       message: "邮箱格式错误",
     },
   ],
-  password: [{ required: true, message: "请输入密码" }],
   registerPassword: [
-    {
-      required: true,
-      message: "请输入密码",
-    },
     {
       validator: proxy.Verify.password,
       message: "密码应至少包含两位不同的字符",
@@ -224,15 +230,10 @@ const rules = {
   ],
   reRegisterPassword: [
     {
-      required: true,
-      message: "请再次输入密码",
-    },
-    {
       validator: checkRepassword,
       message: "两次密码不一致",
     },
   ],
-  captcha: [{ required: true, message: "请输入验证码" }],
 };
 
 const opType = ref(1);
@@ -316,6 +317,24 @@ const hoverTab = (type, isHover) => {
     };
   }
 };
+
+const showBottomImages = ref(true);
+const leftImage = ref(img22Open);
+const rightImage = ref(img33Open);
+
+// 显示邮箱聚焦的图片
+const onEmailFocus = () => {
+  leftImage.value = img22Open;
+  rightImage.value = img33Open;
+  showBottomImages.value = true;
+};
+
+// 显示密码聚焦的图片（包括注册和确认密码）
+const onPasswordFocus = () => {
+  leftImage.value = img22Close;
+  rightImage.value = img33Close;
+  showBottomImages.value = true;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -323,7 +342,8 @@ const hoverTab = (type, isHover) => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  user-select: none; // 禁止整个 dialog 内容被复制
+  user-select: none;
+  position: relative;
   .bg {
     width: 250px;
     height: 250px;
@@ -379,6 +399,39 @@ const hoverTab = (type, isHover) => {
         margin-left: 10px;
       }
     }
+  }
+}
+
+.bottom-images {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+
+  img {
+    width: 80px;
+    height: auto;
+    opacity: 0.98;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .left-img {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translateX(0);
+  }
+
+  .right-img {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateX(0);
   }
 }
 </style>

@@ -12,11 +12,11 @@
         </div>
       </div>
       <div class="video-user-info">
-        <Avatar :userId="userInfo.userId" :avatar="userInfo.avatar"></Avatar>
+        <Avatar :userId="userInfo.id" :avatar="userInfo.avatar"></Avatar>
         <div class="user-info">
           <router-link
             class="username"
-            :to="`/user/${userInfo.userId}`"
+            :to="`/user/${userInfo.id}`"
             target="_blank"
             >{{ userInfo.username }}</router-link
           >
@@ -26,16 +26,17 @@
           <div class="op-btns">
             <router-link
               class="btn-go-home"
-              :to="`user/${userInfo.userId}`"
+              :to="`user/${userInfo.id}`"
               target="_blank"
               >访问主页</router-link
             >
             <div class="focus-btn">
               <el-dropdown v-if="userInfo.haveFocus">
                 <el-button type="info" class="btn" :style="{ width: '100%' }"
-                  ><span class="iconfont icon-list"></span>已关注{{
-                    userInfo.fansCount
-                  }}</el-button
+                  ><span class="iconfont icon-list"></span>已关注<span
+                    style="margin-left: 10px"
+                    >{{ userInfo.fansCount }}</span
+                  ></el-button
                 >
                 <template #dropdown>
                   <el-dropdown-menu
@@ -46,7 +47,10 @@
                 </template>
               </el-dropdown>
               <el-button class="btn" type="primary" @click="focusUser(1)" v-else
-                >关注{{ userInfo.fansCount }}</el-button
+                >关注
+                <span style="margin-left: 10px">{{
+                  userInfo.fansCount
+                }}</span></el-button
               >
             </div>
           </div>
@@ -107,14 +111,7 @@ const navActionStore = useNavAction();
 import { useLoginStore } from "@/stores/loginStore.js";
 const loginStore = useLoginStore();
 
-const userInfo = ref({
-  userId: "123456",
-  username: "测试用户",
-  avatar: "null",
-  personIntroduction: "这是一个测试用户的简介",
-  haveFocus: false,
-  fansCount: 256,
-});
+const userInfo = ref({});
 
 const getUserInfo = async (userId) => {
   let result = await proxy.Request({
@@ -137,7 +134,7 @@ const focusUser = async (changeCount) => {
   let result = await proxy.Request({
     url: changeCount == 1 ? proxy.Api.uHomeFocus : proxy.Api.uHomeCancelFocus,
     params: {
-      focusUserId: userInfo.value.userId,
+      focusUserId: userInfo.value.id,
     },
   });
   if (!result) {
@@ -165,7 +162,7 @@ const getVideoInfo = async () => {
   }
 
   const resultData = result.data.video;
-  // getUserInfo(resultData.userId);
+  getUserInfo(resultData.userId);
 
   const tags = resultData.tags ? resultData.tags.split(",") : [];
   let introduction = proxy.Utils.resetHtmlContent(resultData.introduction);
@@ -304,6 +301,12 @@ provide("playerHeight", (height) => {
         }
       }
     }
+  }
+
+  .focus-btn .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .video-body {
