@@ -226,6 +226,9 @@ provide("playerHeight", (height) => {
         color: #9499a0;
 
         .iconfont {
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
           margin-right: 20px;
           font-size: 14px;
 

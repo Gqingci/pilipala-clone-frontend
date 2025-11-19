@@ -14,11 +14,10 @@ const videoInfo = inject("videoInfo");
 const dataList = ref([]);
 const loadDataList = async () => {
   let result = await proxy.Request({
-    url: proxy.Api.loadRecommendVideo,
-    // url: proxy.Api.getVideoRecommend,
+    url: proxy.Api.getVideoRecommend,
     params: {
-      // keysword: videoInfo.value.videoName,
-      // videoId: videoInfo.value.videoId,
+      keyword: videoInfo.value.videoName,
+      videoId: videoInfo.value.videoId,
     },
   });
   if (!result) {

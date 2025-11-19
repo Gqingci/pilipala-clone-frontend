@@ -225,7 +225,6 @@ const delComment = () => {
         url: proxy.Api.userDelComment,
         params: {
           commentId: props.data.commentId,
-          isParent: props.replyLevel === 1,
         },
       });
       if (!result) {

@@ -10,9 +10,11 @@
           <div class="shade">
             <div class="play-count" v-show="layoutType === 0">
               <div class="iconfont icon-bofangliang">
-                {{ data.playCount }}
+                <span style="margin-left: 3px">{{ data.playCount }}</span>
               </div>
-              <div class="iconfont icon-danmu">{{ data.danmuCount }}</div>
+              <div class="iconfont icon-danmu">
+                <span style="margin-left: 3px">{{ data.danmuCount }}</span>
+              </div>
             </div>
             <div class="play-time">{{ data.playTiem }}</div>
           </div>
@@ -98,7 +100,13 @@ const props = defineProps({
       justify-content: space-between;
       .play-count {
         display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 16px;
         .iconfont {
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
           font-size: 13px;
           &::before {
             font-size: 16px;
@@ -106,6 +114,9 @@ const props = defineProps({
           }
         }
         .icon-danmu {
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
           margin-left: 15px;
         }
       }

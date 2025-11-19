@@ -5,7 +5,6 @@ import './assets/scss/base.scss'
 import 'element-plus/dist/index.css'
 import '@/assets/icon/iconfont.css'
 import '@/assets/icon/bofangliang/iconfont.css'
-import iconFontWoff2 from '@/assets/icon/iconfont.woff2'
 
 import VueCookies from 'vue-cookies'
 import App from './App.vue'

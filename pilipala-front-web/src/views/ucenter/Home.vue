@@ -31,7 +31,7 @@
 
 <script setup>
 import * as echarts from "echarts";
-import { ref, getCurrentInstance, shallowRef } from "vue";
+import { ref, getCurrentInstance, shallowRef, onMounted } from "vue";
 const { proxy } = getCurrentInstance();
 
 const dataPartList = ref([
@@ -62,7 +62,7 @@ const dataPartList = ref([
   {
     name: "弹幕",
     icon: "icon-dammu-solid",
-    totalCountKey: "dammuCount",
+    totalCountKey: "danmuCount",
     preDataType: 6,
     totalCount: 0,
     preCount: 0,
@@ -124,7 +124,6 @@ const init = () => {
   dataChart.value = echarts.init(chartRef.value);
   loadWeekData();
 };
-// init();
 
 const loadWeekData = async () => {
   let result = await proxy.Request({
@@ -140,7 +139,7 @@ const loadWeekData = async () => {
   const dateArray = [];
   const dataCountArray = [];
   result.data.forEach((item) => {
-    dateArray.push(item.statisticsData);
+    dateArray.push(item.statisticsDate);
     dataCountArray.push(item.statisticsCount);
   });
 
@@ -169,7 +168,7 @@ const loadWeekData = async () => {
       {
         type: "category",
         boundaryGap: false,
-        data: dataArray,
+        data: dateArray,
       },
     ],
     yAxis: [
@@ -225,6 +224,10 @@ const loadWeekData = async () => {
 
   dataChart.value.setOption(option, true);
 };
+
+onMounted(() => {
+  init();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -266,7 +269,7 @@ const loadWeekData = async () => {
       font-size: 20px;
     }
   }
-  &.active {
+  .video-data-item.active {
     background: #ff4684;
     .video-data-title {
       .iconfont {

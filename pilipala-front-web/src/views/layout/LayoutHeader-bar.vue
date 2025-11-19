@@ -202,7 +202,7 @@ const navJump = (url) => {
   height: 64px;
   padding: 0px 25px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: auto 1fr auto;
   .menu {
     display: flex;
     margin-top: 15px;

@@ -69,7 +69,7 @@ import { ref, getCurrentInstance } from "vue";
 const { proxy } = getCurrentInstance();
 
 const currentVideoId = ref();
-const loadData4VideoSelect = () => {
+const loadData4VideoSelect = (videoId) => {
   currentVideoId.value = videoId;
   loadDataList();
 };
@@ -99,7 +99,7 @@ const loadDataList = async (videoId) => {
     videoId: currentVideoId.value,
   };
   let result = await proxy.Request({
-    url: proxy.Api.uploadComment,
+    url: proxy.Api.ucLoadComment,
     params: params,
   });
   if (!result) {

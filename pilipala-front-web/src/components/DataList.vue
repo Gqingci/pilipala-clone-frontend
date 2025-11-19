@@ -5,7 +5,7 @@
       v-if="dataSource.list != null && dataSource.list.length == 0"
     >
       <img src="../assets/images/article_empty.png" />
-      <div>你还未上传稿件。</div>
+      <div>暂无稿件。</div>
     </div>
     <div class="data-list-panel">
       <template v-for="item in dataSource.list">

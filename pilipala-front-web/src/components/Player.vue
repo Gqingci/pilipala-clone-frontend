@@ -166,11 +166,22 @@ const changeWideScreen = () => {
   emit("changeWideScreen", wideScreen.value);
 };
 
+const updatePlayerHeight = () => {
+  if (playerRef.value) {
+    const width = playerRef.value.clientWidth; // 获取当前宽度
+    const height = Math.round((width * 9) / 16); // 16:9 高度
+    playerHeight.value = height;
+    setPlayerHeight(height); // 通知父组件，如果你有注入
+  }
+};
+
 onMounted(() => {
   nextTick(() => {
     initPlayer();
     const height = Math.round(playerRef.value.clientWidth - 8) * 0.5625;
+    window.addEventListener("resize", updatePlayerHeight);
     playerHeight.value = height;
+    updatePlayerHeight();
     setPlayerHeight(height);
   });
 
@@ -183,6 +194,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  window.removeEventListener("resize", updatePlayerHeight);
   if (player) {
     player.destroy(false);
   }

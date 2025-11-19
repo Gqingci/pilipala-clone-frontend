@@ -25,6 +25,10 @@
         (navActionStore.fixedHeader && showFixedHeader) ||
         navActionStore.forceFixedHeader
       "
+      :style="{
+        width: proxy.bodyMaxWidth + 'px',
+        minWidth: proxy.bodyMinWidth + 'px',
+      }"
     >
       <LayoutHeader theme="dark" />
     </div>

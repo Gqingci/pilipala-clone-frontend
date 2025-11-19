@@ -6,8 +6,8 @@
       v-model="searchForm.videoId"
       @change="loadData"
       ><el-option
-        :value="inputTagEmits.videoId"
-        :label="inputTagEmits.videoName"
+        :value="item.videoId"
+        :label="item.videoName"
         v-for="item in allVideoList"
         :key="item"
       ></el-option

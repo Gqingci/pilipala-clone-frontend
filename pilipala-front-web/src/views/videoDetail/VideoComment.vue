@@ -70,7 +70,6 @@ const showReplyHandler = (commentId) => {
 provide("showReply", showReplyHandler);
 
 const videoInfo = inject("videoInfo");
-debugger;
 const showComment = computed(() => {
   return (
     videoInfo.value.interaction == null ||
@@ -88,6 +87,12 @@ const changeOrder = (type) => {
 
 const loadCommentList = async () => {
   if (!showComment.value) {
+    dataSource.value = {
+      list: [],
+      pageNo: 1,
+      pageTotal: 1,
+      totalCount: 0,
+    };
     return;
   }
   loadingData.value = true;
