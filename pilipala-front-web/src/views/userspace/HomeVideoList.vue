@@ -31,7 +31,7 @@
 
 <script setup>
 import VideoItem from "./VideoItem.vue";
-import "@/assets/uhome.scss";
+import "@/assets/scss/uhome.scss";
 import { ref, getCurrentInstance } from "vue";
 const { proxy } = getCurrentInstance();
 import { useRoute } from "vue-router";
