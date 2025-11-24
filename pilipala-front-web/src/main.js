@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
-import './assets/scss/base.scss'
+import '@/assets/scss/base.scss'
 import 'element-plus/dist/index.css'
 import '@/assets/icon/iconfont.css'
 import '@/assets/icon/bofangliang/iconfont.css'
@@ -20,6 +20,9 @@ import Table from '@/components/Table.vue'
 import DataLoadMoreList from '@/components/DataLoadMoreList.vue'
 import NoData from '@/components/NoData.vue'
 import Collapse from '@/components/Collapse.vue'
+import ImageCoverSelect from '@/components/ImageCoverSelect.vue'
+import MyTab from '@/components/MyTab.vue'
+import DataGridList from '@/components/DataGridList.vue'
 
 import Verify from '@/utils/Verify'
 import Request from '@/utils/Request'
@@ -43,6 +46,9 @@ app.component("Table", Table)
 app.component("DataLoadMoreList", DataLoadMoreList)
 app.component("NoData", NoData)
 app.component("Collapse", Collapse)
+app.component("ImageCoverSelect", ImageCoverSelect)
+app.component("MyTab", MyTab)
+app.component("DataGridList", DataGridList)
 
 app.config.globalProperties.VueCookies = VueCookies
 app.config.globalProperties.bodyMaxWidth = 2000;

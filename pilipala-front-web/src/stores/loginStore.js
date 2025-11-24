@@ -7,7 +7,8 @@ const useLoginStore = defineStore('loginstate', {
             userInfo: {
 
             },
-            devideId: null
+            devideId: null,
+            messageNoReadCount: 0
         }
     },
     actions: {
@@ -19,6 +20,12 @@ const useLoginStore = defineStore('loginstate', {
         },
         saveDeviceId(deviceId) {
             this.devideId = deviceId;
+        },
+        saveMessageNoReadCount(count) {
+            this.messageNoReadCount = count;
+        },
+        readMessageCount(count) {
+            this.messageNoReadCount -= count;
         }
     }
 })

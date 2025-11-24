@@ -5,7 +5,7 @@
       v-if="dataSource.list != null && dataSource.list.length == 0"
     >
       <img src="../assets/images/article_empty.png" />
-      <div>暂无稿件。</div>
+      <div style="margin-top: 20px">{{ props.text }}</div>
     </div>
     <div class="data-list-panel">
       <template v-for="item in dataSource.list">
@@ -34,6 +34,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  text: {
+    type: String,
+    default: "暂无稿件",
+  },
 });
 
 const emit = defineEmits(["loadData"]);
@@ -45,6 +49,7 @@ const handlePageNoChange = (pageNo) => {
 
 <style lang="scss" scoped>
 .data-empty {
+  margin-top: 20px;
   text-align: center;
 }
 

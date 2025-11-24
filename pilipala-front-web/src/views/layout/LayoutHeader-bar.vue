@@ -38,12 +38,57 @@
       <li><a href="" class="iconfont">会员购</a></li>
     </ul>
 
-    <div class="search-body">
+    <div class="search-body" v-if="showHeaderSearch">
       <div class="search-panel">
-        <div class="search-panel-inner">
-          <div class="input-panel">
-            <input type="text" />
-            <div class="iconfont icon-search"></div>
+        <div class="search-panel-inner" @focusout="onFocusOut" tabindex="0">
+          <div :class="['input-panel', showHistory ? 'focus-input' : '']">
+            <input
+              type="text"
+              @focus="onSearchFocus"
+              @blur="onInputBlur"
+              v-model="keyword"
+              ref="searchInputRef"
+              @keyup.enter="search"
+            />
+            <div class="iconfont icon-search" @click="search"></div>
+          </div>
+          <div class="history-panel" v-if="showHistory">
+            <div class="history-panel">
+              <div class="search-title">
+                <div class="title">搜索历史</div>
+                <div
+                  class="btn-clean"
+                  @click="searchHistoryStore.cleanHistory()"
+                >
+                  清空
+                </div>
+              </div>
+              <div class="search-tag-list">
+                <el-tag
+                  v-for="tag in searchHistoryStore.searchHistory"
+                  :key="tag.name"
+                  closable
+                  type="info"
+                  class="search-tag"
+                  @click="searchKeyword(tag)"
+                  @close="searchHistoryStore.delHistory(tag)"
+                  v-show="searchHistoryStore.searchHistory.includes(tag)"
+                  >{{ tag }}</el-tag
+                >
+              </div>
+              <div class="hot-search-title">pilipala热搜</div>
+              <div class="hot-search-list">
+                <div
+                  class="search-item"
+                  v-for="(item, index) in hotSearchList"
+                  :key="index"
+                  @click="searchKeyword(item)"
+                >
+                  <span class="number">{{ index + 1 }} </span
+                  ><span class="text">{{ item }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -98,22 +143,42 @@
             </div>
           </div>
         </template>
-        <Avatar v-else :width="35" :lazy="false" @click="login"></Avatar>
-        <!-- <div class="user-placeLogin-panel">
-          <div class="placeLogin">
-            <p class="placeLogin-text">免费看高清视频</p>
-            <p class="placeLogin-text">发表弹幕/评论</p>
-            <p class="placeLogin-text">热门番剧影视看不停</p>
-            <p class="placeLogin-text">多端同步播放记录</p>
-          </div>
-          <el-button class="btn" @click="login">立刻登录</el-button>
-        </div> -->
+        <template v-else>
+          <el-popover
+            :width="350"
+            trigger="hover"
+            :show-arrow="false"
+            :offset="22"
+            placement="bottom"
+            popper-class="place-login-popover"
+            ><template #reference>
+              <Avatar :width="35" :lazy="false" @click="login"></Avatar>
+            </template>
+            <div class="user-placeLogin-panel">
+              <div class="placeLogin">
+                <div class="placeLogin-item">免费看高清视频</div>
+                <div class="placeLogin-item">发表弹幕/评论</div>
+                <div class="placeLogin-item">热门番剧影视看不停</div>
+                <div class="placeLogin-item">多端同步播放记录</div>
+              </div>
+              <el-button class="btn" @click="login">立刻登录</el-button>
+            </div>
+          </el-popover>
+        </template>
       </div>
       <div class="user-panel-item" @click="navJump('/message')">
+        <el-badge
+          :value="loginStore.messageNoReadCount"
+          :hidden="loginStore.messageNoReadCount == 0"
+          class="badge"
+        ></el-badge>
         <div class="iconfont icon-message"></div>
         <div>消息</div>
       </div>
-      <div class="user-panel-item" @click="navJump('/collection')">
+      <div
+        class="user-panel-item"
+        @click="navJump(`/user/${loginStore.userInfo.id}/collection`)"
+      >
         <div class="iconfont icon-collection"></div>
         <div>收藏</div>
       </div>
@@ -125,7 +190,7 @@
         <div class="iconfont icon-light"></div>
         <div>创作中心</div>
       </div>
-      <div class="btn-upload" @click="navJump('/upload')">
+      <div class="btn-upload" @click="navJump('/ucenter/postVideo')">
         <el-button type="primary" size="large">
           <span class="iconfont icon-upload"></span>
           <span>投稿</span>
@@ -136,19 +201,32 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, computed } from "vue";
+import {
+  ref,
+  getCurrentInstance,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 const { proxy } = getCurrentInstance();
-
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
 import { useLoginStore } from "@/stores/loginStore.js";
-import Avatar from "../../components/Avatar.vue";
 const loginStore = useLoginStore();
 import { useCategoryStore } from "@/stores/categoryStore";
 const categoryStore = useCategoryStore();
+import { useSearchHistoryStore } from "@/stores/searchHistoryStore";
+const searchHistoryStore = useSearchHistoryStore();
 
 const props = defineProps({
   theme: {
     type: String,
     default: "light", //light 白色 dark 黑色
+  },
+  hotSearchList: {
+    type: Array,
+    default: [],
   },
 });
 
@@ -167,19 +245,16 @@ const getCountInfo = async () => {
   userCountInfo.value = result.data;
 };
 
+const showHeaderSearch = computed(() => route.path !== "/search");
+
 const logout = async () => {
-  proxy.Confirm({
-    message: "确认退出？",
-    okfun: async () => {
-      let result = await proxy.Request({
-        url: proxy.Api.logout,
-      });
-      if (!result) {
-        return;
-      }
-      loginStore.saveUserInfo({});
-    },
+  let result = await proxy.Request({
+    url: proxy.Api.logout,
   });
+  if (!result) {
+    return;
+  }
+  loginStore.saveUserInfo({});
 };
 
 const partCount = 10;
@@ -194,7 +269,91 @@ const navJump = (url) => {
   }
   window.open(url, "blank");
 };
+
+const keyword = ref();
+const searchInputRef = ref();
+const showHistory = ref(false);
+const historyPanel = ref(null);
+const onSearchFocus = () => {
+  showHistory.value = true;
+};
+
+const search = () => {
+  if (!keyword) {
+    return;
+  }
+  showHistory.value = false;
+  searchInputRef.value?.blur();
+  router.push({
+    path: "/search",
+    query: {
+      keyword: keyword.value,
+    },
+  });
+};
+
+const searchKeyword = (keyword) => {
+  showHistory.value = false;
+  searchInputRef.value?.blur();
+  router.push({
+    path: "/search",
+    query: {
+      keyword,
+    },
+  });
+};
+
+const onInputBlur = (e) => {
+  setTimeout(() => {
+    const activeEl = document.activeElement;
+    if (historyPanel.value && !historyPanel.value.contains(activeEl)) {
+      showHistory.value = false;
+    }
+  }, 100);
+};
+
+const onScroll = () => {
+  showHistory.value = false;
+  searchInputRef.value.blur();
+};
+
+const onFocusOut = (e) => {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    showHistory.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", onScroll);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", onScroll);
+});
 </script>
+
+<style>
+.place-login-popover .placeLogin {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.place-login-popover .placeLogin-item {
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.place-login-popover .btn {
+  width: 100%;
+  background-color: #00a1d6 !important;
+  color: #fff !important;
+  border: none !important;
+}
+</style>
 
 <style lang="scss" scoped>
 .header-bar {
@@ -227,7 +386,7 @@ const navJump = (url) => {
     .search-panel {
       margin: 0px auto;
       position: relative;
-      max-width: 80%;
+      max-width: 40%;
       .search-panel-inner {
         width: 100%;
         position: absolute;
@@ -267,6 +426,88 @@ const navJump = (url) => {
             cursor: pointer;
             &:hover {
               background: #dddd;
+            }
+          }
+        }
+        .focus-input {
+          background: #fff;
+        }
+
+        .history-panel {
+          background: #fff;
+          padding: 10px;
+          text-align: left;
+
+          .search-title {
+            display: flex;
+            justify-content: space-between;
+
+            .title {
+              color: #000 !important;
+              font-size: 16px;
+            }
+
+            .btn-clean {
+              cursor: pointer;
+              font-size: 13px;
+              color: #9499a0;
+
+              &:hover {
+                color: #40c5f1;
+              }
+            }
+          }
+
+          .search-tag-list {
+            margin-top: 10px;
+
+            .el-tag {
+              cursor: pointer;
+              margin-right: 5px;
+              margin-top: 5px;
+              transition: none !important;
+              color: #000;
+              &:hover {
+                color: #008ac5;
+              }
+
+              :deep(.el-tag__content) {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 200px;
+                overflow: hidden;
+              }
+            }
+          }
+
+          .hot-search-title {
+            color: #000 !important;
+            margin-top: 10px;
+            font-size: 16px;
+          }
+
+          .hot-search-list {
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+
+            .search-item {
+              width: 50%;
+              padding: 8px 5px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              color: #000;
+
+              &:hover {
+                background: #d6d9dd;
+                cursor: pointer;
+              }
+
+              .number {
+                margin-right: 5px;
+              }
             }
           }
         }
@@ -397,6 +638,26 @@ const navJump = (url) => {
       text-align: center;
       cursor: pointer;
       padding: 0px 13px;
+      position: relative;
+      .badge {
+        position: absolute;
+      }
+
+      :deep(.el-badge__content) {
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px !important;
+        font-size: 12px !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        transform: translate(0%, -50%);
+        right: 0 !important;
+        top: 0 !important;
+      }
       .iconfont {
         text-align: center;
         font-size: 20px;

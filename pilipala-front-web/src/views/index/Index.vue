@@ -66,11 +66,15 @@
 </template>
 
 <script setup>
+import { useNavAction } from "@/stores/navActionStore";
+const navActionStore = useNavAction();
 import ColorThief from "colorthief";
 import VideoList from "@/views/videoList/VideoList.vue";
 import { mitter } from "@/eventBus/eventBus.js";
 import { ref, getCurrentInstance, onMounted, onUnmounted } from "vue";
 const { proxy } = getCurrentInstance();
+import { useRouter } from "vue-router";
+const router = useRouter();
 import VideoItem from "../../components/VideoItem.vue";
 
 const carouselWidth = ref();
@@ -145,6 +149,11 @@ const extractMainColor = async (imageUrl) => {
 };
 
 onMounted(async () => {
+  navActionStore.setFixedHeader(false);
+  navActionStore.setFixedCategory(false);
+  navActionStore.setShowHeader(true);
+  navActionStore.setShowCategory(true);
+  navActionStore.setForceFixedHeader(false);
   mitter.on("windowResize", () => resetCarouselWidth());
   await loadRecommendVideo();
   resetCarouselWidth();
@@ -157,6 +166,13 @@ onMounted(async () => {
 
 onUnmounted(() => {
   mitter.off("windowResize");
+});
+
+router.afterEach((to) => {
+  if (to.path === "/") {
+    navActionStore.setShowHeader(true);
+    navActionStore.setShowCategory(true);
+  }
 });
 </script>
 
@@ -196,15 +212,13 @@ onUnmounted(() => {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 120px; // 渐变层高度适中
+      height: 120px;
       padding: 20px 20px 15px 20px;
       background: linear-gradient(
         to top,
         rgba(0, 0, 0, 0.75) 0%,
-        // 底部较深
         rgba(0, 0, 0, 0.45) 40%,
-        // 中间柔和过渡
-        rgba(0, 0, 0, 0) 100% // 顶部完全透明
+        rgba(0, 0, 0, 0) 100%
       );
       display: flex;
       flex-direction: column;

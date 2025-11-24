@@ -22,6 +22,31 @@ const routes = [
             path: '/video/:videoId',
             name: 'videoDetail',
             component: () => import('@/views/videoDetail/VideoDetail.vue'),
+        },
+        {
+            path: '/history',
+            name: 'history',
+            component: ()=> import('@/views/history/History.vue')
+        },
+        {
+            path: '/message',
+            name: 'messageHome',
+            component: ()=> import('@/views/message/UserMessage.vue')
+        },
+        {
+            path: '/message/:messageType',
+            name: 'message',
+            component: ()=> import('@/views/message/UserMessage.vue')
+        },
+        {
+            path: '/hot',
+            name: 'hot',
+            component: ()=> import('@/views/hot/Hot.vue')
+        },
+        {
+            path: '/search',
+            name: 'search',
+            component: ()=> import('@/views/search/Search.vue')
         }]
     },
     {
@@ -54,6 +79,47 @@ const routes = [
             name: '弹幕列表',
             component: () => import('@/views/ucenter/DanmuList.vue')
         }],
+    }, 
+    {
+        path: '/user/:userId',
+        name: 'userspace',
+        component: () => import('@/views/userspace/UserSpaceLayout.vue'),
+        redirect: '/user/:userId',
+        children:[{
+            path: '/user/:userId',
+            name: 'uspaceHome',
+            component: ()=> import('@/views/userspace/Home.vue')
+        },
+        {
+            path: '/user/:userId/video',
+            name: 'uspaceMyVideo',
+            component: ()=> import('@/views/userspace/VideoList.vue')
+        },
+        {
+            path: '/user/:userId/series',
+            name: 'uspaceSeries',
+            component: ()=> import('@/views/userspace/VideoSeries.vue')
+        },
+        {
+            path: '/user/:userId/series/:seriesId',
+            name: 'uspaceSeriesDetail',
+            component: ()=> import('@/views/userspace/VideoSeriesDetail.vue')
+        },
+        {
+            path: '/user/:userId/collection',
+            name: 'uspaceCollection',
+            component: ()=> import('@/views/userspace/Collection.vue')
+        },
+        {
+            path: '/user/:userId/focus',
+            name: 'uspaceFocus',
+            component: ()=> import('@/views/userspace/FocusFansList.vue')
+        },
+        {
+            path: '/user/:userId/fans',
+            name: 'uspaceFans',
+            component: ()=> import('@/views/userspace/FocusFansList.vue')
+        }]
     }
 ]
 

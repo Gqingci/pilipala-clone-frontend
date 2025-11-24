@@ -50,7 +50,7 @@ const Api = {
     //点赞，评论，投币，评论，收藏
     userAction: "/userAction/doAction",
     //播放历史
-    playHisotry: "/history/loadHistory",
+    playHistory: "/history/loadHistory",
     delHistory: "/history/delHistory",
     cleanHistory: "/history/cleanHistory",
     //消息
@@ -72,7 +72,7 @@ const Api = {
     //粉丝列表
     uHomeFansList: "/uhome/loadFansList",
     //视频系列
-    uHomeSeriesLoadVideoSeries: "/uhome/series/loadVideoSeries",
+    uHomeSeriesLoadVideoSeries: "/uhome/series/loadVideoSeriesList",
     //获取系列视频
     uHomeSeriesLoadAllVideo: "/uhome/series/loadAllVideo",
     //保存系列

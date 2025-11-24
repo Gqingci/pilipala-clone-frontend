@@ -144,7 +144,7 @@ const props = defineProps({
         color: var(--blue);
       }
       :deep(.highlight) {
-        color: red !important;
+        color: #f25d8e !important;
       }
     }
     .user-name {

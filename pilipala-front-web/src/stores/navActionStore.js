@@ -25,7 +25,7 @@ const useNavAction = defineStore("navAction", {
         },
         setForceFixedHeader(forceFixedHeader) {
             this.forceFixedHeader = forceFixedHeader;
-        }
+        },
     }
 })
 

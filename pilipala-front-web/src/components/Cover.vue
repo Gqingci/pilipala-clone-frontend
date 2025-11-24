@@ -22,7 +22,7 @@
       </template>
       <template #error>
         <img
-          :src="proxy.Utils.getLocalImage(img404)"
+          :src="proxy.Utils.getLocalImage(img)"
           class="el-image_inner"
           :style="{ 'object-fit': fit }"
         />
@@ -65,9 +65,9 @@ const props = defineProps({
   defaultImg: {
     type: String,
   },
-  img404: {
+  img: {
     type: String,
-    default: "404_cover.png",
+    default: "article_empty.png",
   },
   borderRadius: {
     type: String,

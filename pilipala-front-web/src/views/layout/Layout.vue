@@ -17,7 +17,7 @@
         })`,
       }"
     >
-      <LayoutHeader></LayoutHeader>
+      <LayoutHeader :hotSearchList="hotSearchList"></LayoutHeader>
     </div>
     <div
       class="header-fixed"
@@ -30,7 +30,7 @@
         minWidth: proxy.bodyMinWidth + 'px',
       }"
     >
-      <LayoutHeader theme="dark" />
+      <LayoutHeader theme="dark" :hotSearchList="hotSearchList" />
     </div>
     <div
       class="category-fixed"
@@ -63,10 +63,19 @@
 </template>
 
 <script setup>
+import { useLoginStore } from "@/stores/loginStore.js";
+const loginStore = useLoginStore();
 import { mitter } from "@/eventBus/eventBus";
 import Account from "../account/Account.vue";
 import LayoutHeader from "../layout/LayoutHeader-bar.vue";
-import { ref, getCurrentInstance, onMounted, onUnmounted, computed } from "vue";
+import {
+  ref,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  computed,
+  watch,
+} from "vue";
 const { proxy } = getCurrentInstance();
 import Category from "./Category.vue";
 import { useNavAction } from "@/stores/navActionStore";
@@ -118,6 +127,41 @@ const backgroundImage = computed(() => {
   const background = categoryStore.currentPCategory?.background;
   return background ? proxy.Api.sourcePath + background : null;
 });
+
+const getNoReadCount = async () => {
+  if (Object.keys(loginStore.userInfo).length == 0) {
+    return;
+  }
+  let result = await proxy.Request({
+    url: proxy.Api.getNoReadCount,
+  });
+  if (!result) {
+    return;
+  }
+  loginStore.saveMessageNoReadCount(result.data);
+};
+
+const hotSearchList = ref([]);
+const getSearchKeywordTop = async () => {
+  let result = await proxy.Request({
+    url: proxy.Api.getSearchKeywordTop,
+  });
+  if (!result) {
+    return;
+  }
+  hotSearchList.value = result.data;
+};
+getSearchKeywordTop();
+
+watch(
+  () => loginStore.userInfo,
+  (newVal, oldVal) => {
+    if (newVal) {
+      getNoReadCount();
+    }
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style>
