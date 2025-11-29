@@ -107,10 +107,6 @@
           ></Avatar>
           <div class="user-info-panel">
             <div class="username">{{ loginStore.userInfo.username }}</div>
-            <!-- <div class="coin">
-              <span class="coin-text">硬币：</span
-              ><span class="coin-number">1</span>
-            </div> -->
             <div class="count-info">
               <div class="count-info-item">
                 <div class="count-value">{{ userCountInfo.focusCount }}</div>
@@ -172,8 +168,47 @@
           :hidden="loginStore.messageNoReadCount == 0"
           class="badge"
         ></el-badge>
-        <div class="iconfont icon-message"></div>
-        <div>消息</div>
+        <el-popover
+          :width="200"
+          trigger="hover"
+          :show-arrow="false"
+          :offset="22"
+          placement="bottom"
+          ><template #reference>
+            <div @mouseover="getNoReadCountGroup">
+              <div class="iconfont icon-message"></div>
+              <div>消息</div>
+            </div>
+          </template>
+          <!-- 原有的 el-popover 内容替换 -->
+          <div class="user-message-panel">
+            <div class="message-list">
+              <div
+                class="message-item"
+                v-for="item in messageNav"
+                :key="item.messageTypeCode"
+                @click="selectMessageType(item)"
+              >
+                <!-- 左侧图标+文字 -->
+                <div class="item-left">
+                  <span
+                    :class="[
+                      'iconfont',
+                      item.icon,
+                      'icon-' + item.messageTypeCode,
+                    ]"
+                  ></span>
+                  <span class="item-name">{{ item.name }}</span>
+                </div>
+
+                <!-- 右侧红点 -->
+                <div class="message-count" v-if="item.noReadCount > 0">
+                  {{ item.noReadCount > 99 ? "99+" : item.noReadCount }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-popover>
       </div>
       <div
         class="user-panel-item"
@@ -229,6 +264,37 @@ const props = defineProps({
     default: [],
   },
 });
+
+const messageNav = ref([
+  {
+    name: "系统通知",
+    messageTypeCode: "sys",
+    messageType: 1,
+    noReadCount: 0,
+    icon: "icon-sys-message",
+  },
+  {
+    name: "收到的赞",
+    messageTypeCode: "like",
+    messageType: 2,
+    noReadCount: 0,
+    icon: "icon-good",
+  },
+  {
+    name: "收到收藏",
+    messageTypeCode: "collection",
+    messageType: 3,
+    noReadCount: 0,
+    icon: "icon-collection",
+  },
+  {
+    name: "评论和@",
+    messageTypeCode: "comment",
+    messageType: 4,
+    noReadCount: 0,
+    icon: "icon-comment",
+  },
+]);
 
 const login = () => {
   loginStore.setLogin(true);
@@ -323,6 +389,32 @@ const onFocusOut = (e) => {
   }
 };
 
+const getNoReadCountGroup = async () => {
+  let result = await proxy.Request({
+    url: proxy.Api.getNoReadCountGroup,
+  });
+  if (!result) {
+    return;
+  }
+  messageNav.value.forEach((nav) => {
+    const messageTypeData = result.data.find((item) => {
+      return item.messageType == nav.messageType;
+    });
+    if (messageTypeData) {
+      nav.noReadCount = messageTypeData.messageCount;
+    }
+  });
+};
+
+const selectMessageType = (item) => {
+  const activeEl = document.activeElement;
+  if (activeEl) {
+    activeEl.blur();
+  }
+
+  router.push(`/message/${item.messageTypeCode}`);
+};
+
 onMounted(() => {
   window.addEventListener("scroll", onScroll);
 });
@@ -331,7 +423,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
+<style lang="scss">
 .place-login-popover .placeLogin {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -352,6 +444,78 @@ onBeforeUnmount(() => {
   background-color: #00a1d6 !important;
   color: #fff !important;
   border: none !important;
+}
+
+.user-message-panel {
+  padding: 0;
+
+  .message-title {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    border-bottom: 1px solid #e3e5e7;
+    margin-bottom: 5px;
+  }
+
+  .message-list {
+    padding-bottom: 5px;
+  }
+
+  .message-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: #61666d;
+
+    &:hover {
+      background-color: #f1f2f3;
+      color: #333;
+    }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+
+      .iconfont {
+        font-size: 18px;
+        margin-right: 12px;
+
+        &.icon-sys {
+          color: #23ade5;
+        } // 系统通知-蓝
+        &.icon-like {
+          color: #ff6a8a;
+        } // 收到的赞-粉
+        &.icon-comment {
+          color: #8fd95a;
+        } // 回复-绿
+        &.icon-collection {
+          color: #f9a336;
+        } // 收藏-橙
+      }
+
+      .item-name {
+        font-size: 14px;
+      }
+    }
+
+    .message-count {
+      background-color: #fb7299;
+      color: #fff;
+      font-size: 12px;
+      padding: 0 6px;
+      height: 18px;
+      line-height: 18px;
+      border-radius: 9px;
+      min-width: 18px;
+      text-align: center;
+      transform: scale(0.9);
+    }
+  }
 }
 </style>
 

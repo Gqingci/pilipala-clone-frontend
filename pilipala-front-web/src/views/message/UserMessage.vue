@@ -224,7 +224,7 @@ onMounted(() => {
       }
 
       .message-count {
-        background: #f56c6c;
+        background: #ff6a8a;
         color: #fff;
         padding: 0px 4px;
         height: 20px;

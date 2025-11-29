@@ -1,5 +1,5 @@
 import Request from "./Request";
-//单服务版本
+
 const Api = {
     captcha: "/account/captcha",
     login: "/account/login",
