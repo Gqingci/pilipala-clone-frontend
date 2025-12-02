@@ -1,66 +1,80 @@
 <template>
   <div>
     <div class="command-panel">
-      <div
-        class="carousel-panel"
-        :style="{
-          width: carouselWidth + 'px',
-          height: carouselWidth * 0.655 + 'px',
-        }"
-      >
-        <el-carousel
-          :height="carouselWidth * 0.6 + 'px'"
-          indicator-position="none"
-          arrow="never"
-          @change="carouselChange"
-          ref="carouselRef"
+      <div class="carousel">
+        <div
+          class="carousel-panel"
+          :style="{
+            width: carouselWidth + 'px',
+            height: carouselWidth * 0.493 + 'px',
+          }"
         >
-          <el-carousel-item
-            v-for="(item, index) in carouselVideoList"
-            :key="item"
-            :name="index + ''"
-            ><div class="roll-image">
-              <router-link :to="`/video/${item.videoId}`" target="_blank"
-                ><img :src="`${proxy.Api.sourcePath}${item.videoCover}`" alt=""
-              /></router-link></div
-          ></el-carousel-item>
-        </el-carousel>
-        <div class="banner-carousel__footer">
-          <div class="mask" :style="{ backgroundColor: maskColor }">
-            <div class="carousel-bottom" v-if="carouselVideoList.length > 0">
-              <div class="name-op">
-                <router-link
-                  class="video-name"
-                  :to="`/video/${carouselVideoList[carouselIndex].videoId}`"
-                  target="_blank"
-                  >{{ carouselVideoList[carouselIndex].videoName }}</router-link
-                >
-                <div class="change-btn">
-                  <span class="iconfont icon-right" @click="preCarousel"></span>
-                  <span class="iconfont icon-left" @click="nextCarousel"></span>
-                </div>
+          <el-carousel
+            :height="carouselWidth * 0.6 + 'px'"
+            indicator-position="none"
+            arrow="never"
+            @change="carouselChange"
+            ref="carouselRef"
+          >
+            <el-carousel-item
+              v-for="(item, index) in carouselVideoList"
+              :key="item"
+              :name="index + ''"
+            >
+              <div class="roll-image">
+                <router-link :to="`/video/${item.videoId}`" target="_blank">
+                  <img
+                    :src="`${proxy.Api.sourcePath}${item.videoCover}`"
+                    alt=""
+                  />
+                </router-link>
               </div>
-              <div class="dtos">
-                <div
-                  :class="[
-                    'dto-item',
-                    carouselIndex == item - 1 ? 'active' : '',
-                  ]"
-                  v-for="item in carouselVideoList.length"
-                  :key="item"
-                  @click="setCarousel(item)"
-                ></div>
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+
+        <div
+          class="carousel-botton"
+          :style="{
+            background: `linear-gradient(to top, ${maskColor} 65%, transparent 100%)`,
+            width: carouselWidth + 'px',
+          }"
+        >
+          <div class="bottom-content" v-if="carouselVideoList.length > 0">
+            <div class="name-op">
+              <router-link
+                class="video-name"
+                :to="`/video/${carouselVideoList[carouselIndex].videoId}`"
+                target="_blank"
+              >
+                {{ carouselVideoList[carouselIndex].videoName }}
+              </router-link>
+
+              <div class="change-btn">
+                <span class="iconfont icon-right" @click="preCarousel"></span>
+                <span class="iconfont icon-left" @click="nextCarousel"></span>
               </div>
+            </div>
+
+            <div class="dtos">
+              <div
+                v-for="item in carouselVideoList.length"
+                :key="item"
+                :class="['dto-item', carouselIndex == item - 1 ? 'active' : '']"
+                @click="setCarousel(item)"
+              ></div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="video-list">
         <div v-for="item in commendVideoList" :key="item">
           <VideoItem :data="item"></VideoItem>
         </div>
       </div>
     </div>
+
     <VideoList style="margin-top: 100px"></VideoList>
   </div>
 </template>
@@ -187,112 +201,93 @@ router.afterEach((to) => {
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 
-    .roll-image {
-      position: relative;
-      background: #000;
-      text-align: center;
-
-      a {
-        display: block;
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-      }
-
-      &:hover img {
-        transform: scale(1.03);
-      }
+    .roll-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
     }
 
-    .carousel-bottom {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 120px;
-      padding: 20px 20px 15px 20px;
-      background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.75) 0%,
-        rgba(0, 0, 0, 0.45) 40%,
-        rgba(0, 0, 0, 0) 100%
-      );
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+    .roll-image:hover img {
+      transform: scale(1.03);
+    }
+  }
+
+  .carousel-botton {
+    border-radius: 0 0 10px 10px;
+    margin-top: -60px;
+    height: 150px;
+    position: relative;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    .bottom-content {
+      top: -10px;
+      position: relative;
+      z-index: 3;
 
       .name-op {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 12px;
 
         .video-name {
           flex: 1;
           color: #fff;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
           text-decoration: none;
-          font-size: 17px;
-          font-weight: 600;
-          text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-          transition: color 0.3s;
-        }
-
-        .video-name:hover {
-          color: #ff6699;
+          font-size: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .change-btn {
-          margin-left: 10px;
           width: 60px;
           display: flex;
           justify-content: space-between;
 
           .iconfont {
             cursor: pointer;
-            text-align: center;
-            width: 26px;
-            line-height: 26px;
-            font-size: 20px;
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 5px;
             color: #fff;
-            transition: all 0.3s;
-
-            &:hover {
-              background-color: rgba(255, 255, 255, 0.3);
-            }
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 8px;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin-left: -20px;
+          }
+          .iconfont:hover {
+            background: rgba(255, 255, 255, 0.3);
           }
         }
       }
 
       .dtos {
         display: flex;
-        margin-top: 8px;
-        align-items: center;
-
         .dto-item {
           width: 8px;
           height: 8px;
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.4);
-          cursor: pointer;
           margin-right: 8px;
-          transition: all 0.3s;
+          cursor: pointer;
+          transition: 0.3s;
         }
 
         .active {
-          width: 12px;
-          height: 12px;
           background: #fff;
+          transform: scale(1.5);
         }
       }
     }
   }
+
   .video-list {
     margin-left: 20px;
     flex: 1;
