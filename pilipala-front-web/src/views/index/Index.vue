@@ -163,8 +163,8 @@ const extractMainColor = async (imageUrl) => {
 };
 
 onMounted(async () => {
-  navActionStore.setFixedHeader(false);
-  navActionStore.setFixedCategory(false);
+  navActionStore.setFixedHeader(true);
+  navActionStore.setFixedCategory(true);
   navActionStore.setShowHeader(true);
   navActionStore.setShowCategory(true);
   navActionStore.setForceFixedHeader(false);

@@ -165,8 +165,9 @@ const delMessage = async (messageId) => {
 onMounted(() => {
   navActionStore.setFixedHeader(true);
   navActionStore.setFixedCategory(false);
-  navActionStore.setShowHeader(true);
+  navActionStore.setShowHeader(false);
   navActionStore.setShowCategory(false);
+  navActionStore.setForceFixedHeader(true);
 
   if (!route.params.messageType) {
     return;
@@ -181,9 +182,9 @@ onMounted(() => {
 <style lang="scss" scoped>
 .message-panel {
   display: flex;
-  height: calc(100vh - 180px);
+  height: calc(100vh - 150px);
   width: 1200px;
-  margin: 0px auto;
+  margin: 80px auto;
 
   .left-panel {
     background-image: url(../../assets/creation_bg.png);

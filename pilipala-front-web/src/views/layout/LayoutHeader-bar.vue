@@ -107,6 +107,13 @@
           ></Avatar>
           <div class="user-info-panel">
             <div class="username">{{ loginStore.userInfo.username }}</div>
+
+            <div class="coin">
+              <div class="coin-text">硬币：</div>
+              <div class="coin-number">
+                {{ userCountInfo.currentCoinCount }}
+              </div>
+            </div>
             <div class="count-info">
               <div class="count-info-item">
                 <div class="count-value">{{ userCountInfo.focusCount }}</div>
@@ -118,9 +125,9 @@
               </div>
               <div class="count-info-item">
                 <div class="count-value">
-                  {{ userCountInfo.currentCoinCount }}
+                  {{ userCountInfo.dynamicCount }}
                 </div>
-                <div class="count-title">硬币</div>
+                <div class="count-title">动态</div>
               </div>
             </div>
             <router-link
@@ -169,44 +176,46 @@
           class="badge"
         ></el-badge>
         <el-popover
-          :width="200"
+          :width="Object.keys(loginStore.userInfo).length > 0 ? 150 : 350"
           trigger="hover"
           :show-arrow="false"
           :offset="22"
           placement="bottom"
+          @show="handleShow"
           ><template #reference>
-            <div @mouseover="getNoReadCountGroup">
+            <div>
               <div class="iconfont icon-message"></div>
               <div>消息</div>
             </div>
           </template>
-          <!-- 原有的 el-popover 内容替换 -->
-          <div class="user-message-panel">
-            <div class="message-list">
-              <div
-                class="message-item"
-                v-for="item in messageNav"
-                :key="item.messageTypeCode"
-                @click="selectMessageType(item)"
-              >
-                <!-- 左侧图标+文字 -->
-                <div class="item-left">
-                  <span
-                    :class="[
-                      'iconfont',
-                      item.icon,
-                      'icon-' + item.messageTypeCode,
-                    ]"
-                  ></span>
-                  <span class="item-name">{{ item.name }}</span>
-                </div>
-
-                <!-- 右侧红点 -->
-                <div class="message-count" v-if="item.noReadCount > 0">
-                  {{ item.noReadCount > 99 ? "99+" : item.noReadCount }}
+          <div>
+            <template v-if="Object.keys(loginStore.userInfo).length > 0">
+              <div class="user-message-panel">
+                <div class="message-list">
+                  <div
+                    class="message-item"
+                    v-for="item in messageNav"
+                    :key="item.messageTypeCode"
+                    @click="selectMessageType(item)"
+                  >
+                    <!-- 左侧文字 -->
+                    <div class="item-left">
+                      <span class="item-name">{{ item.name }}</span>
+                    </div>
+                    <!-- 右侧红点 -->
+                    <div class="message-count" v-if="item.noReadCount > 0">
+                      {{ item.noReadCount > 99 ? "99+" : item.noReadCount }}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
+            <template v-else>
+              <div class="place-login-panel">
+                <div class="place-login-text">登录即可查看消息记录</div>
+                <el-button class="btn" @click="login">立刻登录</el-button>
+              </div>
+            </template>
           </div>
         </el-popover>
       </div>
@@ -406,13 +415,21 @@ const getNoReadCountGroup = async () => {
   });
 };
 
+const handleShow = () => {
+  if (!Object.keys(loginStore.userInfo).length > 0) {
+    return;
+  }
+
+  getNoReadCountGroup();
+};
+
 const selectMessageType = (item) => {
   const activeEl = document.activeElement;
   if (activeEl) {
     activeEl.blur();
   }
 
-  router.push(`/message/${item.messageTypeCode}`);
+  window.open(`/message/${item.messageTypeCode}`, "_blank");
 };
 
 onMounted(() => {
@@ -437,13 +454,6 @@ onBeforeUnmount(() => {
   border-radius: 5px;
   text-align: left;
   font-size: 14px;
-}
-
-.place-login-popover .btn {
-  width: 100%;
-  background-color: #00a1d6 !important;
-  color: #fff !important;
-  border: none !important;
 }
 
 .user-message-panel {
@@ -515,6 +525,30 @@ onBeforeUnmount(() => {
       text-align: center;
       transform: scale(0.9);
     }
+  }
+}
+
+.place-login-popover .btn {
+  width: 100%;
+  background-color: #00a1d6 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.place-login-panel {
+  color: var(--text3);
+  text-align: center;
+  .place-login-text {
+    margin: 10px;
+    font-size: 14px;
+    font-family: "圆体";
+  }
+  .btn {
+    margin: 10px auto;
+    width: 100%;
+    background-color: #00a1d6 !important;
+    color: #fff !important;
+    border: none !important;
   }
 }
 </style>
@@ -698,6 +732,7 @@ onBeforeUnmount(() => {
         top: 0px;
       }
       .user-info-panel {
+        border: 1px solid #e3e5e7;
         display: none;
         padding: 10px 20px 10px;
         background: #fff;
@@ -715,22 +750,22 @@ onBeforeUnmount(() => {
           font-size: 16px;
           text-align: center;
           line-height: 40px;
-          color: var(--text3);
+          color: #000;
         }
 
         .coin {
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 15px;
+          font-size: 12px;
 
           .coin-text {
-            color: var(--text3);
+            color: #000;
             display: inline-block;
             margin-right: 5px;
           }
           .coin-number {
-            color: #000;
+            color: var(--text3);
           }
         }
 

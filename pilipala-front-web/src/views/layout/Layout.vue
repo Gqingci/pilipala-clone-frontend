@@ -174,7 +174,7 @@ body {
   position: relative;
   margin: 0px auto;
   background: #fff;
-  min-height: calc(100vh);
+  min-height: calc(100vh - 100px);
   .header {
     margin: 0px auto;
     height: 180px;
