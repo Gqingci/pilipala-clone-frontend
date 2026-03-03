@@ -9,7 +9,7 @@
       </div>
       <div class="tag-list">
         <router-link
-          :to="`search?keyword=${item}`"
+          :to="`/search?keyword=${item}`"
           class="tag-item"
           target="_blank"
           :key="item"
