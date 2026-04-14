@@ -88,3 +88,83 @@ pilipala Frontend 是在线视频分享系统的前端部分，基于 Vue3 + Ele
 - Pinia 状态管理
 - 数据可视化展示
 - 模块划分清晰
+
+---
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Node.js >= 16.0.0
+- npm >= 7.0.0
+
+### 安装依赖
+
+项目包含两个子项目，需要分别安装依赖：
+
+```bash
+# 安装主站前端依赖
+cd pilipala-front-web
+npm install
+
+# 安装管理后台依赖
+cd ../pilipala-front-admin
+npm install
+```
+
+### 启动开发服务器
+
+#### 启动主站前端
+
+```bash
+cd pilipala-front-web
+npm run dev
+```
+
+启动后访问：`http://localhost:5173`
+
+#### 启动管理后台
+
+```bash
+cd pilipala-front-admin
+npm run dev
+```
+
+启动后访问：`http://localhost:5174`（端口可能不同，以终端输出为准）
+
+### 构建生产版本
+
+```bash
+# 构建主站前端
+cd pilipala-front-web
+npm run build
+
+# 构建管理后台
+cd pilipala-front-admin
+npm run build
+```
+
+构建产物位于各子项目的 `dist` 目录下。
+
+### 预览构建结果
+
+```bash
+npm run preview
+```
+
+---
+
+## 📂 项目结构
+
+```
+pilipala-front/
+├── pilipala-front-web/      # 主站前端
+│   ├── src/
+│   ├── public/
+│   └── package.json
+├── pilipala-front-admin/    # 管理后台
+│   ├── src/
+│   ├── public/
+│   └── package.json
+└── README.md
+```
